@@ -1,5 +1,5 @@
-Scriptname MisriahArmory:MA5D extends ObjectReference
-{Attaches to: MA5D "MA5D ICWS" [WEAP:0202D4E5]}
+Scriptname MisriahArmory:DMR extends ObjectReference
+{Attaches to: DMR "M392 DMR" [WEAP:0205BDA4]}
 import MisriahArmory:Log
 
 Actor Owner
@@ -7,7 +7,7 @@ int Count = 0
 int Capacity = 0
 
 ; Materials
-MatSwap MA5D_AmmoCounter_Blue_00 ; {MA5D_AmmoCounter_Blue_00 [MSWP:0002D46B]}
+MatSwap DMR_AmmoCounter_Blue_00 ; {DMR_AmmoCounter_Blue_00 [MSWP:0005BDA8]}
 MatSwap:RemapData[] Remapping
 MatSwap:RemapData DigitFirst
 MatSwap:RemapData DigitLast
@@ -21,7 +21,7 @@ string ReloadComplete = "reloadComplete" const
 
 
 Group Properties
-	Weapon Property MA5D Auto Const Mandatory
+	Weapon Property DMR Auto Const Mandatory
 EndGroup
 
 
@@ -29,8 +29,8 @@ EndGroup
 ;---------------------------------------------
 
 Event OnInit()
-	MA5D_AmmoCounter_Blue_00 = Game.GetFormFromFile(0x0002D46B, "MisriahArmory.esp") as MatSwap
-	WriteLine(self, "Initialized with material: "+MA5D_AmmoCounter_Blue_00)
+	DMR_AmmoCounter_Blue_00 = Game.GetFormFromFile(0x0005BDA8, "MisriahArmory.esp") as MatSwap
+	WriteLine(self, "Initialized with material: "+DMR_AmmoCounter_Blue_00)
 EndEvent
 
 
@@ -41,16 +41,16 @@ Event OnEquipped(Actor akActor)
 	Remapping = new MatSwap:RemapData[0]
 
 	DigitFirst = new MatSwap:RemapData
-	DigitFirst.Source = "MisriahArmory\\MA5D\\AmmoCounter\\Blue\\#_\\0.bgsm"
+	DigitFirst.Source = "MisriahArmory\\DMR\\AmmoCounter\\#_\\0.bgsm"
 	DigitFirst.Target = GetFirstDigit(Count)
 	Remapping.Add(DigitFirst)
 
 	DigitLast = new MatSwap:RemapData
-	DigitLast.Source = "MisriahArmory\\MA5D\\AmmoCounter\\Blue\\_#\\0.bgsm"
+	DigitLast.Source = "MisriahArmory\\DMR\\AmmoCounter\\_#\\0.bgsm"
 	DigitLast.Target = GetLastDigit(Count)
 	Remapping.Add(DigitLast)
 
-	ApplySwap()
+	;ApplySwap()
 
 	RegisterForAnimationEvent(Owner, WeaponFire)
 	RegisterForAnimationEvent(Owner, ReloadComplete)
@@ -65,6 +65,7 @@ Event OnUnequipped(Actor akActor)
 	DigitLast = none
 	Remapping = none
 	Owner = none
+	WriteLine(self, Owner+" unequipped: "+ToString())
 EndEvent
 
 
@@ -83,7 +84,7 @@ Event OnAnimationEvent(ObjectReference akSource, string asEventName)
 		ApplySwap()
 		WriteLine(self, asEventName+" event. "+ToString())
 	Else
-		WriteLine(self, "The animation event "+asEventName+" was unhandled.")
+		MisriahArmory:Log.WriteLine(self, "The animation event "+asEventName+" was unhandled.")
 	EndIf
 EndEvent
 
@@ -110,7 +111,7 @@ EndFunction
 
 
 int Function GetAmmoAmount()
-	InstanceData:Owner instance = MA5D.GetInstanceOwner()
+	InstanceData:Owner instance = DMR.GetInstanceOwner()
 	Ammo ammoType = InstanceData.GetAmmo(instance)
 	int ammoAmount = Owner.GetItemCount(ammoType)
 	If (ammoAmount < Capacity)
@@ -121,12 +122,13 @@ int Function GetAmmoAmount()
 EndFunction
 
 
+
 string Function GetFirstDigit(int number) Global
 	If (number)
 		int digit = number / 10
-		return "MisriahArmory\\MA5D\\AmmoCounter\\Blue\\#_\\" + digit + ".bgsm"
+		return "MisriahArmory\\DMR\\AmmoCounter\\#_\\" + digit + ".bgsm"
 	Else
-		return "MisriahArmory\\MA5D\\AmmoCounter\\Blue\\#_\\0.bgsm"
+		return "MisriahArmory\\DMR\\AmmoCounter\\#_\\0.bgsm"
 	EndIf
 EndFunction
 
@@ -134,16 +136,16 @@ EndFunction
 string Function GetLastDigit(int number) Global
 	If (number)
 		int digit = number % 10
-		return "MisriahArmory\\MA5D\\AmmoCounter\\Blue\\_#\\" + digit + ".bgsm"
+		return "MisriahArmory\\DMR\\AmmoCounter\\_#\\" + digit + ".bgsm"
 	Else
-		return "MisriahArmory\\MA5D\\AmmoCounter\\Blue\\_#\\0.bgsm"
+		return "MisriahArmory\\DMR\\AmmoCounter\\_#\\0.bgsm"
 	EndIf
 EndFunction
 
 
 Function ApplySwap()
-	MA5D_AmmoCounter_Blue_00.SetRemapData(Remapping)
-	Owner.ApplyMaterialSwap(MA5D_AmmoCounter_Blue_00)
+	DMR_AmmoCounter_Blue_00.SetRemapData(Remapping)
+	Owner.ApplyMaterialSwap(DMR_AmmoCounter_Blue_00)
 EndFunction
 
 
